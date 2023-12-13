@@ -13,6 +13,21 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        #characterDetails {
+            margin: 20px auto; /* Center the table and add space around */
+            width: 80%; /* Make the table wider */
+            border-collapse: collapse; /* Collapse borders */
+        }
+
+        #characterDetails th, #characterDetails td {
+            border: 1px solid #ddd; /* Add border to table headers and cells */
+            padding: 8px; /* Add padding */
+            text-align: left; /* Align text to left */
+        }
+
+        #characterDetails th {
+            background-color: #f2f2f2; /* Background color for headers */
+        }
     </style>
     
 </head>
@@ -24,7 +39,6 @@
     <div id="select">
         <input type="text" id="searchInput" placeholder="Search characters...">
         <button id="selectButton" onclick="select_Char()">Select</button>
-        <button id="searchButton" onclick="findChars()">Search</button>
     </div>
         
     <script>
@@ -55,27 +69,40 @@
             if (!characters || characters.length === 0) {
                 throw new Error('No character data found');
             }
-
+            
+            if(!Boolean(document.getElementById('checkt'))){
+                console.log(Boolean(document.getElementById('checkt')));
+                const checkt = document.createElement('checkt');
+                checkt.id='checkt';
+                document.body.appendChild(checkt)
             // Render character details as a table
             const table = document.createElement('table');
             table.id = 'characterDetails';
-            table.className='character'
+            table.className='character';
            // document.body.innerHTML = ''; // Clear the body before appending the table
             document.body.appendChild(table); // Append the table to the body
-
+            };
+            const table=document.getElementById('characterDetails');
             const thead = document.createElement('thead');
             const tbody = document.createElement('tbody');
+            
 
+            if(!Boolean(document.getElementById('check'))){
+                console.log(Boolean(document.getElementById('check')));
+                const check = document.createElement('check');
+                check.id='check';
+                document.body.appendChild(check)
+    
             // Create header row based on the keys of the first character object
-           // const headRow = document.createElement('tr');
-           // Object.keys(characters[0]).forEach(key => {
-                //const th = document.createElement('th');
-               // th.textContent = key;
-               // headRow.appendChild(th);
-           // });
-            //thead.appendChild(headRow);
-            //table.appendChild(thead);
-
+            const headRow = document.createElement('tr');
+            Object.keys(characters[0]).forEach(key => {
+                const th = document.createElement('th');
+               th.textContent = key;
+               headRow.appendChild(th);
+            });
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+        };
             // Create a row for each character
             characters.forEach(character => {
                 const dataRow = document.createElement('tr');
@@ -87,6 +114,7 @@
                 tbody.appendChild(dataRow);
             });
             table.appendChild(tbody);
+            
         })
         }
         function findChars() {
