@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Character Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style> /* Style for the search input field */
+        #searchInput {
+            padding: 10px;
+            margin-right: 5px;
+            width: 300px; /* Width of the search input */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <h1>Comparison Tool</h1>
+    <p>Compare the stats of up to four different characters.</p>
+
+    <div id="select">
+        <input type="text" id="searchInput" placeholder="Search characters...">
+        <button id="selectButton" onclick="select_Char()">Select</button>
+        <button id="searchButton" onclick="findChars()">Search</button>
+    </div>
+        
+    <script>
+    // Function to perform search based on input
+        function select_Char(){
+            console.log( "confirm")
+            const searchInput = document.getElementById('searchInput');
+            const characterName = searchInput.value;
+            console.log( characterName)
+            // Check if the input is empty
+            if (characterName.trim() === '') {
+                alert('Please enter a character name.');
+                return;
+            }
+            fetch(`/getCharacterSearch?name=${encodeURIComponent(characterName)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            //console.log(response.json())
+            return response.json();
+            
+        }).then(test=>add_Characters("Ike",test ))
+        .then(characters => {
+            console.log(characters)
+            //console.log(characters.json())
+            // Check if there is any character data
+            if (!characters || characters.length === 0) {
+                throw new Error('No character data found');
+            }
+
+            // Render character details as a table
+            const table = document.createElement('table');
+            table.id = 'characterDetails';
+            table.className='character'
+           // document.body.innerHTML = ''; // Clear the body before appending the table
+            document.body.appendChild(table); // Append the table to the body
+
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Create header row based on the keys of the first character object
+           // const headRow = document.createElement('tr');
+           // Object.keys(characters[0]).forEach(key => {
+                //const th = document.createElement('th');
+               // th.textContent = key;
+               // headRow.appendChild(th);
+           // });
+            //thead.appendChild(headRow);
+            //table.appendChild(thead);
+
+            // Create a row for each character
+            characters.forEach(character => {
+                const dataRow = document.createElement('tr');
+                Object.values(character).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    dataRow.appendChild(td);
+                });
+                tbody.appendChild(dataRow);
+            });
+            table.appendChild(tbody);
+        })
+        }
+        function findChars() {
+            console.log( "confirm")
+            const searchInput = document.getElementById('searchInput');
+            const characterName = searchInput.value;
+            console.log( characterName)
+            // Check if the input is empty
+            if (characterName.trim() === '') {
+                alert('Please enter a character name.');
+                return;
+            }
+            build_Table1(characterName);
+            // Redirect to character.html page with query parameters
+            //window.location.href = `/search_webpage.html?name=${encodeURIComponent(characterName)}`;
+        }
+        
+        
+        function add_Characters(char, table){
+        fetch(`/getCharacterSearch?name=${encodeURIComponent(char)}`)
+        .then(response1 => {
+            if (!response1.ok) {
+                throw new Error('Network response was not ok: ' + response1.statusText);
+            }
+            //console.log(response.json())
+            return response1.json();
+            
+        }).then(tab=>{table.push(tab[0])})
+        return table
+        }
+
+        //new func for building table
+        function build_Table1(name){
+        if (!name) {
+        // If no name is provided in the URL, show a not found message
+        document.body.innerHTML = '<p>Character name is not provided in the URL.</p>';
+        } else {
+        // Fetch character data and populate the table
+        fetch(`/getCharacterSearch?name=${encodeURIComponent(name)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            //console.log(response.json())
+            return response.json();
+            
+        }).then(test=>add_Characters("Ike",test ))
+        .then(characters => {
+            console.log(characters)
+            //console.log(characters.json())
+            // Check if there is any character data
+            if (!characters || characters.length === 0) {
+                throw new Error('No character data found');
+            }
+
+            // Render character details as a table
+            const table = document.createElement('table');
+            table.id = 'characterDetails';
+            document.body.innerHTML = ''; // Clear the body before appending the table
+            document.body.appendChild(table); // Append the table to the body
+
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Create header row based on the keys of the first character object
+            const headRow = document.createElement('tr');
+            Object.keys(characters[0]).forEach(key => {
+                const th = document.createElement('th');
+                th.textContent = key;
+                headRow.appendChild(th);
+            });
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+
+            // Create a row for each character
+            characters.forEach(character => {
+                const dataRow = document.createElement('tr');
+                Object.values(character).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    dataRow.appendChild(td);
+                });
+                tbody.appendChild(dataRow);
+            });
+            table.appendChild(tbody);
+        })
+        .catch(error => {
+            console.error('Error loading character details:', error);
+            document.body.innerHTML = '<p>Error loading character details.</p>'; // Show error message
+        });
+    }
+};
+    </script>
+</body>
+</html>
+
